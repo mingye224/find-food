@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.core.mapper.DayHoursMapper">
+    <resultMap id="BaseResultMap" type="com.food.core.model.DayHours">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="location_id" jdbcType="BIGINT" property="locationId" />
+        <result column="day" jdbcType="INTEGER" property="day" />
+        <result column="start_hour" jdbcType="INTEGER" property="startHour" />
+        <result column="end_hour" jdbcType="INTEGER" property="endHour" />
+    </resultMap>
+    <select id="selectLocationIdsByInterval" parameterType="com.food.core.model.DayHours" resultType="java.lang.Long">
+        SELECT distinct location_id from day_hours
+        WHERE day = #{day} and not (start_hour > #{endHour} or #{startHour} > end_hour);
+    </select>
+</mapper>

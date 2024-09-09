@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.core.mapper.FoodMapper">
+  <resultMap id="BaseResultMap" type="com.food.core.model.Food">
+    <id column="location_id" jdbcType="BIGINT" property="locationId" />
+    <result column="applicant" jdbcType="VARCHAR" property="applicant" />
+    <result column="facility_type" jdbcType="INTEGER" property="facilityType" />
+    <result column="cnn" jdbcType="BIGINT" property="cnn" />
+    <result column="location_description" jdbcType="VARCHAR" property="locationDescription" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="block" jdbcType="VARCHAR" property="block" />
+    <result column="lot" jdbcType="VARCHAR" property="lot" />
+    <result column="permit" jdbcType="VARCHAR" property="permit" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="food_items" jdbcType="VARCHAR" property="foodItems" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="day_hours" jdbcType="VARCHAR" property="dayHours" />
+    <result column="approved" jdbcType="TIMESTAMP" property="approved" />
+    <result column="received" jdbcType="TIMESTAMP" property="received" />
+    <result column="expiration" jdbcType="TIMESTAMP" property="expiration" />
+    <result column="prior_permit" jdbcType="INTEGER" property="priorPermit" />
+    <result column="fire_prevention_districts" jdbcType="INTEGER" property="firePreventionDistricts" />
+    <result column="police_districts" jdbcType="INTEGER" property="policeDistricts" />
+    <result column="supervisor_districts" jdbcType="INTEGER" property="supervisorDistricts" />
+    <result column="zip_codes" jdbcType="INTEGER" property="zipCodes" />
+  </resultMap>
+
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.food.core.data.FoodReqVO">
+    SELECT *
+    <if test="latitude != null and longitude != null and radius != null">
+      ,ST_Distance_Sphere(point(longitude,latitude),point(#{longitude},#{latitude})) as distance
+    </if>
+    from food WHERE true
+   <if test="locationIds != null">
+     and location_id in
+     <foreach collection="locationIds" index="index" item="item" open="(" separator="," close=")">
+       #{item}
+     </foreach>
+   </if>
+    <if test="applicant != null ">
+      and applicant = #{applicant}
+    </if>
+    <if test="facilityType != null ">
+      and facility_type = #{facilityType}
+    </if>
+    <if test="cnn != null ">
+      and cnn = #{cnn}
+    </if>
+    <if test="address != null and address != ''">
+      and (address like "%"#{address}"%")
+    </if>
+    <if test="locationDescription != null and locationDescription != ''">
+      and (location_description like "%"#{locationDescription}"%")
+    </if>
+    <if test="approvedStart != null and approvedStart != ''">
+      and approved >= #{approvedStart}
+    </if>
+    <if test="approvedEnd != null and approvedEnd != ''">
+      and approved &lt;= #{approvedEnd}
+    </if>
+    <if test="blockLot != null ">
+      and CONCAT(block,lot) = #{blockLot}
+    </if>
+    <if test="permit != null and permit != ''">
+      and permit = #{permit}
+    </if>
+    <if test="status != null ">
+      and status = #{status}
+    </if>
+    <if test="foodItems != null and foodItems != ''">
+      and (food_items like "%"#{foodItems}"%")
+    </if>
+    <if test="priorPermit != null ">
+      and prior_permit = #{priorPermit}
+    </if>
+    <if test="firePreventionDistricts != null ">
+      and fire_prevention_districts = #{firePreventionDistricts}
+    </if>
+    <if test="policeDistricts != null ">
+      and police_districts = #{policeDistricts}
+    </if>
+    <if test="supervisorDistricts != null ">
+      and supervisor_districts = #{supervisorDistricts}
+    </if>
+    <if test="zipCodes != null ">
+      and zip_codes = #{zipCodes}
+    </if>
+    <if test="latitude != null and longitude != null and radius != null">
+      having distance &lt;= #{radius} order by distance
+    </if>
+  </select>
+</mapper>

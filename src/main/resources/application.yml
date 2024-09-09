@@ -1,0 +1,31 @@
+server:
+  port: 8092
+spring:
+  application:
+    name: backendCore
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  datasource:
+    username: root
+    password: 1234qwer!@#$
+    url: jdbc:mysql://127.0.0.1:3306/backend?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# jackson:
+#   date-format: yyyy-MM-dd HH:mm:ss
+#   time-zone: Asia/Shanghai
+
+flyway:
+  enabled: true
+  encoding: utf-8
+  locations: classpath:db/migration
+  table: flyway_schemas_version
+  baseline-on-migrate: false
+  validate-on-migrate: true
+
+logging:
+  config: classpath:logback.xml
+
+
